@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#173a2b" />
+  <title>PCM Preventiva | Planos de Manutenção</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">PCM</div><div><strong>Preventiva</strong><span>Gestão de manutenção</span></div></div>
+    <nav>
+      <button class="nav active" data-view="dashboard">▦ <span>Dashboard</span></button>
+      <button class="nav" data-view="planos">▤ <span>Planos</span></button>
+      <button class="nav" data-view="agenda">◫ <span>Agenda</span></button>
+      <button class="nav" data-view="execucoes">✓ <span>Execuções / SS</span></button>
+      <button class="nav" data-view="backup">⇅ <span>Backup</span></button>
+    </nav>
+    <div class="side-note">Base inicial importada da planilha<br><strong id="seedCount">0 planos/TAGs</strong></div>
+  </aside>
+
+  <main>
+    <header>
+      <div><p class="eyebrow">MANUTENÇÃO INDUSTRIAL</p><h1 id="pageTitle">Dashboard</h1></div>
+      <div class="header-actions"><button class="btn secondary" id="btnExport">Exportar backup</button><button class="btn primary" id="btnNew">+ Novo plano</button></div>
+    </header>
+
+    <section id="dashboard" class="view active">
+      <div class="kpis">
+        <article class="kpi"><span>Planos ativos</span><strong id="kpiActive">0</strong><small>cadastros em operação</small></article>
+        <article class="kpi warning"><span>Próximos 30 dias</span><strong id="kpiNext">0</strong><small>preventivas previstas</small></article>
+        <article class="kpi danger"><span>Vencidas</span><strong id="kpiOverdue">0</strong><small>sem execução registrada</small></article>
+        <article class="kpi good"><span>Aderência</span><strong id="kpiCompliance">0%</strong><small>execuções no prazo</small></article>
+      </div>
+      <div class="grid-2">
+        <article class="panel"><div class="panel-head"><div><h2>Próximas preventivas</h2><p>Programação calculada pela periodicidade</p></div><button class="link-btn" data-goto="agenda">Ver agenda</button></div><div id="nextList" class="list"></div></article>
+        <article class="panel"><div class="panel-head"><div><h2>Distribuição por setor</h2><p>Planos ativos cadastrados</p></div></div><div id="sectorBars" class="bars"></div></article>
+      </div>
+      <article class="panel"><div class="panel-head"><div><h2>Visão de criticidade</h2><p>Priorize os planos mais relevantes para a planta</p></div></div><div id="criticalitySummary" class="chips"></div></article>
+    </section>
+
+    <section id="planos" class="view">
+      <div class="toolbar">
+        <input id="planSearch" class="input search" placeholder="Buscar por plano, TAG, descrição ou responsável..." />
+        <select id="sectorFilter" class="input"><option value="">Todos os setores</option></select>
+        <select id="statusFilter" class="input"><option value="">Ativos e inativos</option><option value="true">Ativos</option><option value="false">Inativos</option></select>
+      </div>
+      <article class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Plano</th><th>TAG</th><th>Descrição</th><th>Setor</th><th>Periodicidade</th><th>Responsável</th><th>Criticidade</th><th>Status</th><th></th></tr></thead><tbody id="plansBody"></tbody></table></div></article>
+    </section>
+
+    <section id="agenda" class="view">
+      <div class="toolbar"><select id="agendaDays" class="input"><option value="30">Próximos 30 dias</option><option value="60">Próximos 60 dias</option><option value="90">Próximos 90 dias</option><option value="365">Próximos 12 meses</option></select><input id="agendaSearch" class="input search" placeholder="Filtrar agenda por plano, TAG ou setor..." /></div>
+      <article class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>Data prevista</th><th>Situação</th><th>ID</th><th>Plano</th><th>TAG</th><th>Setor</th><th>Periodicidade</th><th>Responsável</th><th></th></tr></thead><tbody id="agendaBody"></tbody></table></div></article>
+    </section>
+
+    <section id="execucoes" class="view">
+      <div class="toolbar"><input id="executionSearch" class="input search" placeholder="Buscar execução, SS, plano ou TAG..." /></div>
+      <article class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>Data planejada</th><th>Data baixa</th><th>Plano</th><th>TAG</th><th>SS</th><th>Responsável</th><th>Status</th><th>Observações</th><th></th></tr></thead><tbody id="executionBody"></tbody></table></div></article>
+    </section>
+
+    <section id="backup" class="view">
+      <div class="grid-2">
+        <article class="panel backup-card"><h2>Exportar dados</h2><p>Baixe um arquivo JSON com planos e histórico de execuções. Guarde-o como backup.</p><button class="btn primary" id="backupExport">Exportar JSON</button></article>
+        <article class="panel backup-card"><h2>Importar backup</h2><p>Restaure um backup gerado por este sistema. A importação substitui os dados atuais.</p><label class="btn secondary file-btn">Selecionar JSON<input type="file" id="backupImport" accept="application/json" hidden></label></article>
+      </div>
+      <article class="panel backup-card danger-zone"><h2>Restaurar base original</h2><p>Apaga alterações locais e volta aos 332 planos/TAGs importados da planilha.</p><button class="btn danger-btn" id="resetData">Restaurar base</button></article>
+    </section>
+  </main>
+
+  <dialog id="planDialog">
+    <form id="planForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">CADASTRO</p><h2 id="planModalTitle">Novo plano preventivo</h2></div><button type="button" class="icon-btn close-dialog">×</button></div>
+      <input type="hidden" id="uid" />
+      <div class="form-grid">
+        <label>ID do plano<input id="planId" required placeholder="PLN-001" /></label>
+        <label>TAG<input id="tag" required placeholder="Ex.: TAG-6-033" /></label>
+        <label class="span-2">Nome do plano<input id="planName" required placeholder="Ex.: Inspeção de Esteiras e Redutores" /></label>
+        <label class="span-2">Descrição<input id="description" placeholder="Equipamento, local ou escopo resumido" /></label>
+        <label>Setor<input id="sector" required placeholder="Ex.: Torre de Classificação" /></label>
+        <label>Responsável<input id="owner" placeholder="Nome do responsável" /></label>
+        <label>Periodicidade (dias)<input id="frequency" type="number" min="1" required value="30" /></label>
+        <label>Data-base<input id="baseDate" type="date" required /></label>
+        <label>Criticidade<select id="criticality"><option>Baixa</option><option selected>Média</option><option>Alta</option><option>Crítica</option></select></label>
+        <label class="check"><input id="active" type="checkbox" checked /> Plano ativo</label>
+      </div>
+      <div class="modal-actions"><button type="button" class="btn secondary close-dialog">Cancelar</button><button type="submit" class="btn primary">Salvar plano</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="executionDialog">
+    <form id="executionForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">EXECUÇÃO</p><h2>Registrar manutenção / SS</h2></div><button type="button" class="icon-btn close-exec">×</button></div>
+      <input type="hidden" id="execPlanUid" />
+      <div class="selected-plan" id="selectedPlanInfo"></div>
+      <div class="form-grid">
+        <label>Data planejada<input id="plannedDate" type="date" required /></label>
+        <label>SS aberta?<select id="ssOpen"><option value="Não">Não</option><option value="Sim">Sim</option></select></label>
+        <label>Nº da SS<input id="ssNumber" placeholder="Número da solicitação" /></label>
+        <label>Data de abertura<input id="openDate" type="date" /></label>
+        <label>Data da baixa<input id="closeDate" type="date" /></label>
+        <label>Responsável<input id="execOwner" placeholder="Responsável pela execução" /></label>
+        <label class="span-2">Observações<textarea id="notes" rows="4" placeholder="Condição encontrada, anomalias, ações executadas..."></textarea></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="btn secondary close-exec">Cancelar</button><button type="submit" class="btn primary">Salvar execução</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast"></div>
+  <script src="seed.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
