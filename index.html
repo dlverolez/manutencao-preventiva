@@ -14,17 +14,19 @@
     <button class="nav" data-view="equipamentos">⚙ <span>Equipamentos</span></button>
     <button class="nav" data-view="planos">▤ <span>Planos</span></button>
     <button class="nav" data-view="agenda">◫ <span>Programação</span></button>
+    <button class="nav" data-view="mapa">▦ <span>Mapa 52 semanas</span></button>
     <button class="nav" data-view="ordens">☑ <span>SS / Ordens</span></button>
     <button class="nav" data-view="execucoes">✓ <span>Histórico</span></button>
     <button class="nav" data-view="indicadores">◩ <span>Indicadores</span></button>
+    <button class="nav" data-view="usuarios">♙ <span>Usuários</span></button>
     <button class="nav" data-view="backup">⇅ <span>Dados / Backup</span></button>
   </nav>
-  <div class="sidebar-foot"><span>Base atual</span><strong id="baseCount">0 planos</strong><small>Dados salvos neste navegador</small></div>
+  <div class="sidebar-foot"><span id="sessionUser">Usuário não autenticado</span><strong id="baseCount">0 planos</strong><small><button id="btnLogout" class="logout-link">Sair</button></small></div>
 </aside>
 <main>
 <header>
   <div><p class="eyebrow">GESTÃO DE MANUTENÇÃO INDUSTRIAL</p><h1 id="pageTitle">Dashboard</h1><p class="subtitle" id="pageSubtitle">Visão geral da programação preventiva</p></div>
-  <div class="header-actions"><button class="btn ghost" id="btnQuickOrder">+ Nova SS</button><button class="btn primary" id="btnNewPlan">+ Novo plano</button></div>
+  <div class="header-actions"><span class="user-chip" id="headerUser"></span><button class="btn ghost" id="btnQuickOrder">+ Nova SS</button><button class="btn primary" id="btnNewPlan">+ Novo plano</button></div>
 </header>
 
 <section id="dashboard" class="view active">
@@ -61,6 +63,24 @@
   <article class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>Data</th><th>Situação</th><th>ID</th><th>Plano</th><th>TAG</th><th>Setor</th><th>Criticidade</th><th>Responsável</th><th></th></tr></thead><tbody id="agendaBody"></tbody></table></div></article>
 </section>
 
+
+<section id="mapa" class="view">
+  <div class="map-toolbar">
+    <div class="toolbar wrap">
+      <input id="mapSearch" class="input search" placeholder="Buscar plano, TAG, equipamento...">
+      <select id="mapSector" class="input"><option value="">Todos os setores</option></select>
+      <select id="mapOwner" class="input"><option value="">Todos os responsáveis</option></select>
+      <select id="mapSituation" class="input"><option value="">Todas situações</option><option>Vencido</option><option>A vencer</option><option>Programado</option><option>Planejado</option></select>
+      <button class="btn ghost" id="btnMapToday">Ir para semana atual</button>
+    </div>
+    <div class="map-legend"><span><i class="lg overdue"></i>Vencido</span><span><i class="lg soon"></i>A vencer (14 dias)</span><span><i class="lg programmed"></i>Programado / SS</span><span><i class="lg planned"></i>Planejado</span><span><i class="lg done"></i>Concluído</span></div>
+  </div>
+  <article class="panel map-panel">
+    <div class="panel-head"><div><h2>Mapa de intervenções — 52 semanas</h2><p>Calculado pela última execução/data-base + periodicidade. Cabeçalho usa datas reais de cada semana.</p></div><div class="map-summary" id="mapSummary"></div></div>
+    <div id="maintenanceMap" class="maintenance-map"></div>
+  </article>
+</section>
+
 <section id="ordens" class="view">
   <div class="toolbar wrap"><input id="orderSearch" class="input search" placeholder="Buscar SS, plano, TAG ou responsável..."><select id="orderStatus" class="input"><option value="">Todos os status</option><option>Aberta</option><option>Em execução</option><option>Aguardando material</option><option>Concluída</option><option>Cancelada</option></select><button class="btn primary" id="btnNewOrder2">+ Nova SS / Ordem</button></div>
   <article class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>SS</th><th>Plano / serviço</th><th>TAG</th><th>Abertura</th><th>Prevista</th><th>Prioridade</th><th>Responsável</th><th>Status</th><th></th></tr></thead><tbody id="ordersBody"></tbody></table></div></article>
@@ -77,6 +97,17 @@
   <article class="panel"><div class="panel-head"><div><h2>Resumo gerencial</h2><p>Indicadores calculados a partir dos registros deste sistema</p></div></div><div id="managementSummary" class="summary-grid"></div></article>
 </section>
 
+
+<section id="usuarios" class="view">
+  <div class="grid-3">
+    <article class="panel action-card"><h2>Novo usuário</h2><p>Crie perfis para identificar quem programa e executa as manutenções.</p><button id="btnNewUser" class="btn primary">+ Adicionar usuário</button></article>
+    <article class="panel action-card"><h2>Perfis</h2><p><strong>Admin:</strong> acesso total. <strong>PCM:</strong> planos e programação. <strong>Executor:</strong> baixa e histórico.</p></article>
+    <article class="panel action-card"><h2>Sessão atual</h2><p id="currentSessionInfo">—</p><button id="btnChangePassword" class="btn ghost">Alterar minha senha</button></article>
+  </div>
+  <article class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th>Ativo</th><th>Último acesso</th><th></th></tr></thead><tbody id="usersBody"></tbody></table></div></article>
+  <article class="panel note"><strong>Segurança desta versão</strong><p>O login desta V3 funciona no navegador para separar usuários e registrar autoria. Como o site está no GitHub Pages, ele não é um login corporativo seguro e os dados continuam locais. Para vários computadores compartilharem a mesma base e autenticação real, conecte um banco online (ex.: Supabase/Firebase).</p></article>
+</section>
+
 <section id="backup" class="view">
   <div class="grid-3"><article class="panel action-card"><h2>Exportar backup</h2><p>Salva planos, ordens, checklist e histórico em JSON.</p><button id="exportJson" class="btn primary">Exportar JSON</button></article><article class="panel action-card"><h2>Importar backup</h2><p>Restaura um arquivo de backup deste sistema.</p><label class="btn ghost file-label">Selecionar JSON<input id="importJson" type="file" accept="application/json" hidden></label></article><article class="panel action-card"><h2>Exportar CSV</h2><p>Gera uma tabela simples dos planos para uso no Excel.</p><button id="exportCsv" class="btn ghost">Exportar planos CSV</button></article></div>
   <article class="panel settings"><h2>Configurações da base</h2><div class="settings-row"><div><strong>Restaurar base original</strong><p>Apaga alterações locais e volta à base importada inicialmente.</p></div><button id="resetData" class="btn danger-btn">Restaurar base</button></div></article>
@@ -85,12 +116,26 @@
 </main>
 
 <dialog id="planDialog"><form id="planForm" method="dialog"><div class="modal-head"><div><p class="eyebrow">PLANO PREVENTIVO</p><h2 id="planDialogTitle">Novo plano</h2></div><button type="button" class="icon-btn close-plan">×</button></div><input type="hidden" id="pUid"><div class="form-grid">
-<label>ID do plano<input id="pId" required></label><label>TAG<input id="pTag" required></label><label class="span-2">Nome do plano<input id="pName" required></label><label class="span-2">Descrição / equipamento<input id="pDescription"></label><label>Setor<input id="pSector" required></label><label>Responsável<input id="pOwner"></label><label>Disciplina<select id="pDiscipline"><option>Mecânica</option><option>Elétrica</option><option>Automação</option><option>Lubrificação</option><option>Inspeção</option><option>Utilidades</option><option>Outra</option></select></label><label>Criticidade<select id="pCriticality"><option>Baixa</option><option selected>Média</option><option>Alta</option><option>Crítica</option></select></label><label>Periodicidade (dias)<input id="pFrequency" type="number" min="1" value="30" required></label><label>Data-base<input id="pBaseDate" type="date" required></label><label>Duração estimada (h)<input id="pDuration" type="number" min="0" step="0.25" value="1"></label><label>Equipe mínima<input id="pCrew" type="number" min="1" value="1"></label><label class="span-2">Materiais / peças previstas<textarea id="pMaterials" rows="2"></textarea></label><label class="span-2">Checklist (uma atividade por linha)<textarea id="pChecklist" rows="5" placeholder="Inspecionar rolamentos&#10;Verificar folgas&#10;Lubrificar mancais"></textarea></label><label class="check span-2"><input id="pActive" type="checkbox" checked> Plano ativo</label>
+<label>ID do plano<input id="pId" required></label><label>TAG<input id="pTag" required></label><label class="span-2">Nome do plano<input id="pName" required></label><label class="span-2">Descrição / equipamento<input id="pDescription"></label><label>Setor<input id="pSector" required></label><label>Responsável<input id="pOwner"></label><label>Disciplina<select id="pDiscipline"><option>Mecânica</option><option>Elétrica</option><option>Automação</option><option>Lubrificação</option><option>Inspeção</option><option>Utilidades</option><option>Outra</option></select></label><label>Criticidade<select id="pCriticality"><option>Baixa</option><option selected>Média</option><option>Alta</option><option>Crítica</option></select></label><label>Periodicidade (dias)<input id="pFrequency" type="number" min="1" value="30" required></label><label>Última execução / data-base<input id="pBaseDate" type="date" required></label><label>Duração estimada (h)<input id="pDuration" type="number" min="0" step="0.25" value="1"></label><label>Equipe mínima<input id="pCrew" type="number" min="1" value="1"></label><label class="span-2">Materiais / peças previstas<textarea id="pMaterials" rows="2"></textarea></label><label class="span-2">Checklist (uma atividade por linha)<textarea id="pChecklist" rows="5" placeholder="Inspecionar rolamentos&#10;Verificar folgas&#10;Lubrificar mancais"></textarea></label><label class="check span-2"><input id="pActive" type="checkbox" checked> Plano ativo</label>
 </div><div class="modal-actions"><button type="button" class="btn ghost close-plan">Cancelar</button><button type="submit" class="btn primary">Salvar plano</button></div></form></dialog>
 
 <dialog id="orderDialog"><form id="orderForm" method="dialog"><div class="modal-head"><div><p class="eyebrow">SS / ORDEM DE MANUTENÇÃO</p><h2 id="orderDialogTitle">Nova SS</h2></div><button type="button" class="icon-btn close-order">×</button></div><input type="hidden" id="oUid"><div class="form-grid"><label>Nº SS / Ordem<input id="oNumber" required></label><label>Plano vinculado<select id="oPlan"></select></label><label>TAG<input id="oTag"></label><label>Status<select id="oStatus"><option>Aberta</option><option>Em execução</option><option>Aguardando material</option><option>Concluída</option><option>Cancelada</option></select></label><label>Data abertura<input id="oOpenDate" type="date" required></label><label>Data prevista<input id="oPlannedDate" type="date" required></label><label>Prioridade<select id="oPriority"><option>Baixa</option><option selected>Média</option><option>Alta</option><option>Crítica</option></select></label><label>Responsável<input id="oOwner"></label><label class="span-2">Descrição do serviço<textarea id="oDescription" rows="3"></textarea></label><label class="span-2">Observações<textarea id="oNotes" rows="3"></textarea></label></div><div class="modal-actions"><button type="button" class="btn ghost close-order">Cancelar</button><button type="submit" class="btn primary">Salvar SS</button></div></form></dialog>
 
 <dialog id="executeDialog"><form id="executeForm" method="dialog"><div class="modal-head"><div><p class="eyebrow">EXECUÇÃO</p><h2>Baixar manutenção preventiva</h2></div><button type="button" class="icon-btn close-exec">×</button></div><input type="hidden" id="ePlanUid"><input type="hidden" id="eOrderUid"><div id="execPlanInfo" class="selected-plan"></div><div id="execChecklist" class="checklist"></div><div class="form-grid"><label>Data planejada<input id="ePlannedDate" type="date" required></label><label>Data executada<input id="eDoneDate" type="date" required></label><label>Nº SS / Ordem<input id="eOrderNumber"></label><label>Responsável<input id="eOwner"></label><label>Duração real (h)<input id="eHours" type="number" min="0" step="0.25" value="1"></label><label>Resultado<select id="eResult"><option>Concluído</option><option>Concluído com anomalia</option><option>Parcial</option><option>Não executado</option></select></label><label class="span-2">Materiais utilizados<textarea id="eMaterials" rows="2"></textarea></label><label class="span-2">Anomalias / observações<textarea id="eNotes" rows="4"></textarea></label></div><div class="modal-actions"><button type="button" class="btn ghost close-exec">Cancelar</button><button type="submit" class="btn primary">Registrar execução</button></div></form></dialog>
+
+<dialog id="userDialog"><form id="userForm" method="dialog"><div class="modal-head"><div><p class="eyebrow">USUÁRIO</p><h2 id="userDialogTitle">Novo usuário</h2></div><button type="button" class="icon-btn close-user">×</button></div><input type="hidden" id="uId"><div class="form-grid"><label>Nome completo<input id="uName" required></label><label>Usuário<input id="uUsername" required autocomplete="off"></label><label>Senha<input id="uPassword" type="password" minlength="4" placeholder="mínimo 4 caracteres"></label><label>Perfil<select id="uRole"><option>Admin</option><option>PCM</option><option>Executor</option></select></label><label class="check span-2"><input id="uActive" type="checkbox" checked> Usuário ativo</label></div><div class="modal-actions"><button type="button" class="btn ghost close-user">Cancelar</button><button type="submit" class="btn primary">Salvar usuário</button></div></form></dialog>
+
+<div id="loginScreen" class="login-screen">
+  <form id="loginForm" class="login-card">
+    <div class="login-brand"><div class="logo">PCM</div><div><strong>Manutenção Preventiva</strong><span>Acesso ao sistema</span></div></div>
+    <h2>Entrar</h2><p>Use seu usuário para acessar programação, SS e histórico.</p>
+    <label>Usuário<input id="loginUser" autocomplete="username" required></label>
+    <label>Senha<input id="loginPassword" type="password" autocomplete="current-password" required></label>
+    <div id="loginError" class="login-error"></div>
+    <button class="btn primary login-btn" type="submit">Entrar</button>
+    <small>Primeiro acesso: <strong>admin</strong> / <strong>admin123</strong></small>
+  </form>
+</div>
 <div id="toast" class="toast"></div>
 <script src="seed.js"></script><script src="app.js"></script>
 </body></html>
