@@ -55,7 +55,7 @@
 
 <section id="planos" class="view">
   <div class="toolbar wrap"><input id="planSearch" class="input search" placeholder="Buscar plano, TAG, descrição, setor ou responsável..."><select id="planSector" class="input"><option value="">Todos os setores</option></select><select id="planCriticality" class="input"><option value="">Todas criticidades</option><option>Crítica</option><option>Alta</option><option>Média</option><option>Baixa</option></select><select id="planStatus" class="input"><option value="">Todos</option><option value="true">Ativos</option><option value="false">Inativos</option></select></div>
-  <article class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Plano</th><th>TAG</th><th>Setor</th><th>Disciplina</th><th>Periodicidade</th><th>Responsável</th><th>Criticidade</th><th>Próxima</th><th></th></tr></thead><tbody id="plansBody"></tbody></table></div></article>
+  <article class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Plano mestre</th><th>TAGs</th><th>Setor</th><th>Disciplina</th><th>Periodicidade</th><th>Responsável</th><th>Criticidade</th><th>Próxima</th><th></th></tr></thead><tbody id="plansBody"></tbody></table></div></article>
 </section>
 
 <section id="agenda" class="view">
@@ -76,7 +76,7 @@
     <div class="map-legend"><span><i class="lg overdue"></i>Vencido</span><span><i class="lg soon"></i>A vencer (14 dias)</span><span><i class="lg programmed"></i>Programado / SS</span><span><i class="lg planned"></i>Planejado</span><span><i class="lg done"></i>Concluído</span></div>
   </div>
   <article class="panel map-panel">
-    <div class="panel-head"><div><h2>Mapa de intervenções — 52 semanas</h2><p>Calculado pela última execução/data-base + periodicidade. Cabeçalho usa datas reais de cada semana.</p></div><div class="map-summary" id="mapSummary"></div></div>
+    <div class="panel-head"><div><h2>Mapa de intervenções — 52 semanas</h2><p>52 semanas com datas reais. Cada plano mostra a quantidade de TAGs; ao expandir, aparecem as datas de execução de cada TAG calculadas pela última execução + periodicidade.</p></div><div class="map-summary" id="mapSummary"></div></div>
     <div id="maintenanceMap" class="maintenance-map"></div>
   </article>
 </section>

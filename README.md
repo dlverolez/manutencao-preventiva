@@ -1,23 +1,25 @@
-# PCM Preventiva V3 — GitHub Pages
+# PCM Industrial — V4
 
-Sistema web estático para gestão de planos de manutenção preventiva.
+Versão focada em planos mestres, TAGs e cronograma real de 52 semanas.
 
-## Novidades da V3
-- Login por usuário/perfil (Admin, PCM e Executor)
-- Mapa de intervenções de 52 semanas com datas reais
-- Cálculo pela última execução/data-base + periodicidade
-- Cores para vencido, a vencer, programado, planejado e concluído
-- Programações/SS aparecem no mapa na semana correspondente
-- Usuário responsável e autoria nas novas SS/execuções
+## Principais melhorias
 
-## Primeiro acesso
-Usuário: `admin`
-Senha: `admin123`
+- 26 planos mestres identificados na base original.
+- 331 vínculos de plano/TAG carregados a partir da aba Gantt_52_Semanas.
+- Tela **Planos** agrupada por nome do plano, mostrando a quantidade de TAGs e permitindo expandir a lista.
+- Cronograma de **52 semanas com datas reais**.
+- Cada TAG usa a última execução encontrada na planilha como referência; a próxima data é calculada por `última execução + periodicidade`.
+- Quando não existe execução anterior, o sistema preserva a primeira data planejada encontrada na planilha como início do ciclo.
+- Vencidas ficam no backlog, atividades dos próximos 14 dias aparecem como **A vencer**, SS abertas aparecem como **Programado**, e as demais como **Planejado**.
+- Ao dar baixa, a data executada vira a nova referência e recalcula automaticamente todo o ciclo futuro.
 
-Troque a senha depois do primeiro acesso.
+## Login inicial
 
-## Atualização no GitHub Pages
-Substitua no repositório os arquivos `index.html`, `app.js`, `styles.css`, `seed.js` e `README.md`. O GitHub Pages republicará automaticamente.
+- Usuário: `admin`
+- Senha: `admin123`
 
-## Importante
-O login desta versão é local ao navegador e serve para organização/rastreabilidade. Para autenticação segura e uma base única compartilhada entre computadores/tablets, é necessário conectar um backend/banco online (Supabase, Firebase etc.).
+## GitHub Pages
+
+Substitua os arquivos do repositório atual por estes arquivos e faça o commit. O GitHub Pages será atualizado automaticamente.
+
+> Observação: esta versão continua usando armazenamento local do navegador. Para vários usuários compartilharem os mesmos dados em tempo real, é necessário conectar um banco de dados online.
