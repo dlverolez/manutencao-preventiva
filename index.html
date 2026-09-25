@@ -8,29 +8,25 @@
 </head>
 <body>
 <aside class="sidebar">
-  <div class="brand"><div class="logo">PCM</div><div><strong>Manutenção</strong><span>Preventiva Industrial</span></div></div>
+  <div class="brand"><div class="logo">PCM</div><div><strong>Preventivas</strong><span>52 semanas</span></div></div>
   <nav>
-    <button class="nav active" data-view="dashboard">▦ <span>Dashboard</span></button>
-    <button class="nav" data-view="equipamentos">⚙ <span>Equipamentos</span></button>
-    <button class="nav" data-view="planos">▤ <span>Planos</span></button>
-    <button class="nav" data-view="agenda">◫ <span>Programação</span></button>
-    <button class="nav" data-view="mapa">▦ <span>Mapa 52 semanas</span></button>
-    <button class="nav" data-view="gantt">▥ <span>Gantt P x R</span></button>
-    <button class="nav" data-view="ordens">☑ <span>SS / Ordens</span></button>
-    <button class="nav" data-view="execucoes">✓ <span>Histórico</span></button>
-    <button class="nav" data-view="indicadores">◩ <span>Indicadores</span></button>
-    <button class="nav" data-view="usuarios">♙ <span>Usuários</span></button>
-    <button class="nav" data-view="backup">⇅ <span>Dados / Backup</span></button>
+    <button class="nav active" data-view="gantt">Cronograma</button>
+    <button class="nav" data-view="planos">Planos</button>
+    <button class="nav" data-view="agenda">Programação</button>
+    <button class="nav" data-view="ordens">SS / Ordens</button>
+    <button class="nav" data-view="execucoes">Histórico</button>
+    <button class="nav" data-view="usuarios">Usuários</button>
+    <button class="nav" data-view="backup">Backup</button>
   </nav>
-  <div class="sidebar-foot"><span id="sessionUser">Usuário não autenticado</span><strong id="baseCount">0 planos</strong><small><button id="btnLogout" class="logout-link">Sair</button></small></div>
+  <div class="sidebar-foot"><span id="sessionUser">Usuário</span><strong id="baseCount">0 planos</strong><small><button id="btnLogout" class="logout-link">Sair</button></small></div>
 </aside>
 <main>
-<header>
-  <div><p class="eyebrow">GESTÃO DE MANUTENÇÃO INDUSTRIAL</p><h1 id="pageTitle">Dashboard</h1><p class="subtitle" id="pageSubtitle">Visão geral da programação preventiva</p></div>
-  <div class="header-actions"><span class="user-chip" id="headerUser"></span><button class="btn ghost" id="btnQuickOrder">+ Nova SS</button><button class="btn primary" id="btnNewPlan">+ Novo plano</button></div>
+<header class="simple-header">
+  <div><h1 id="pageTitle">Cronograma 52 semanas</h1><p class="subtitle" id="pageSubtitle">Planejado x realizado por plano e TAG</p></div>
+  <div class="header-actions"><span class="user-chip" id="headerUser"></span><button class="btn ghost" id="btnQuickOrder">+ SS</button><button class="btn primary" id="btnNewPlan">+ Plano</button></div>
 </header>
 
-<section id="dashboard" class="view active">
+<section id="dashboard" class="view">
   <div class="kpis six">
     <article class="kpi"><span>Planos ativos</span><strong id="kpiPlans">0</strong><small>preventivas cadastradas</small></article>
     <article class="kpi"><span>Equipamentos</span><strong id="kpiAssets">0</strong><small>TAGs monitoradas</small></article>
@@ -83,30 +79,32 @@
 </section>
 
 
-<section id="gantt" class="view">
-  <div class="map-toolbar">
-    <div class="toolbar wrap">
-      <input id="ganttSearch" class="input search" placeholder="Buscar plano, TAG ou equipamento...">
-      <select id="ganttSector" class="input"><option value="">Todos os setores</option></select>
-      <select id="ganttOwner" class="input"><option value="">Todos os responsáveis</option></select>
-      <button class="btn ghost" id="btnGanttExpand">Expandir todos</button>
-      <button class="btn ghost" id="btnGanttCollapse">Recolher</button>
-    </div>
-    <div class="gantt-legend">
-      <span><i class="gantt-key planned-key"></i>P = Planejado pela periodicidade</span>
-      <span><i class="gantt-key actual-key"></i>R = Realizado / baixa</span>
-      <span><i class="gantt-key overdue-key"></i>Planejado vencido sem realização</span>
-      <span><i class="gantt-key programmed-key"></i>SS programada</span>
+<section id="gantt" class="view active">
+  <div class="simple-toolbar">
+    <input id="ganttSearch" class="input search" placeholder="Buscar plano ou TAG...">
+    <select id="ganttSector" class="input"><option value="">Todos os setores</option></select>
+    <select id="ganttOwner" class="input"><option value="">Todos os responsáveis</option></select>
+    <select id="ganttMode" class="input"><option value="planned">Planejado</option><option value="actual">Realizado</option><option value="both">Planejado + Realizado</option></select>
+    <button class="btn ghost compact" id="btnGanttExpand">Expandir</button>
+    <button class="btn ghost compact" id="btnGanttCollapse">Recolher</button>
+  </div>
+  <div class="simple-statusbar">
+    <div id="ganttSummary" class="map-summary"></div>
+    <div class="simple-legend">
+      <span><i class="dot planned-key"></i>Planejado</span>
+      <span><i class="dot actual-key"></i>Realizado</span>
+      <span><i class="dot overdue-key"></i>Vencido</span>
+      <span><i class="dot programmed-key"></i>SS programada</span>
     </div>
   </div>
-  <div class="kpis four gantt-kpis">
-    <article class="kpi"><span>Planejado 52 semanas</span><strong id="ganttPlanned">0</strong><small>intervenções previstas</small></article>
-    <article class="kpi good"><span>Realizado</span><strong id="ganttActual">0</strong><small>baixas registradas</small></article>
-    <article class="kpi danger"><span>Vencido sem baixa</span><strong id="ganttOverdue">0</strong><small>intervenções atrasadas</small></article>
-    <article class="kpi info"><span>Aderência</span><strong id="ganttCompliance">—</strong><small>realizado no prazo / planejado vencido</small></article>
+  <div class="simple-kpis">
+    <span>Planejado <strong id="ganttPlanned">0</strong></span>
+    <span>Realizado <strong id="ganttActual">0</strong></span>
+    <span>Vencido <strong id="ganttOverdue">0</strong></span>
+    <span>Aderência <strong id="ganttCompliance">—</strong></span>
   </div>
-  <article class="panel map-panel">
-    <div class="panel-head"><div><h2>Gantt preventivo — Planejado x Realizado</h2><p>52 semanas com datas reais. P mostra a data prevista; R mostra a data efetivamente executada. Expanda o plano para conferir cada TAG.</p></div><div class="map-summary" id="ganttSummary"></div></div>
+  <article class="schedule-card">
+    <div class="schedule-title"><div><h2>Mapa de intervenções</h2><p>Clique no <b>+</b> para abrir as TAGs do plano. Passe o mouse sobre os blocos para ver a data.</p></div></div>
     <div id="ganttChart" class="maintenance-map gantt-chart"></div>
   </article>
 </section>
