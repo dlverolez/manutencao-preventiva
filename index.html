@@ -15,6 +15,7 @@
     <button class="nav" data-view="planos">▤ <span>Planos</span></button>
     <button class="nav" data-view="agenda">◫ <span>Programação</span></button>
     <button class="nav" data-view="mapa">▦ <span>Mapa 52 semanas</span></button>
+    <button class="nav" data-view="gantt">▥ <span>Gantt P x R</span></button>
     <button class="nav" data-view="ordens">☑ <span>SS / Ordens</span></button>
     <button class="nav" data-view="execucoes">✓ <span>Histórico</span></button>
     <button class="nav" data-view="indicadores">◩ <span>Indicadores</span></button>
@@ -78,6 +79,35 @@
   <article class="panel map-panel">
     <div class="panel-head"><div><h2>Mapa de intervenções — 52 semanas</h2><p>52 semanas com datas reais. Cada plano mostra a quantidade de TAGs; ao expandir, aparecem as datas de execução de cada TAG calculadas pela última execução + periodicidade.</p></div><div class="map-summary" id="mapSummary"></div></div>
     <div id="maintenanceMap" class="maintenance-map"></div>
+  </article>
+</section>
+
+
+<section id="gantt" class="view">
+  <div class="map-toolbar">
+    <div class="toolbar wrap">
+      <input id="ganttSearch" class="input search" placeholder="Buscar plano, TAG ou equipamento...">
+      <select id="ganttSector" class="input"><option value="">Todos os setores</option></select>
+      <select id="ganttOwner" class="input"><option value="">Todos os responsáveis</option></select>
+      <button class="btn ghost" id="btnGanttExpand">Expandir todos</button>
+      <button class="btn ghost" id="btnGanttCollapse">Recolher</button>
+    </div>
+    <div class="gantt-legend">
+      <span><i class="gantt-key planned-key"></i>P = Planejado pela periodicidade</span>
+      <span><i class="gantt-key actual-key"></i>R = Realizado / baixa</span>
+      <span><i class="gantt-key overdue-key"></i>Planejado vencido sem realização</span>
+      <span><i class="gantt-key programmed-key"></i>SS programada</span>
+    </div>
+  </div>
+  <div class="kpis four gantt-kpis">
+    <article class="kpi"><span>Planejado 52 semanas</span><strong id="ganttPlanned">0</strong><small>intervenções previstas</small></article>
+    <article class="kpi good"><span>Realizado</span><strong id="ganttActual">0</strong><small>baixas registradas</small></article>
+    <article class="kpi danger"><span>Vencido sem baixa</span><strong id="ganttOverdue">0</strong><small>intervenções atrasadas</small></article>
+    <article class="kpi info"><span>Aderência</span><strong id="ganttCompliance">—</strong><small>realizado no prazo / planejado vencido</small></article>
+  </div>
+  <article class="panel map-panel">
+    <div class="panel-head"><div><h2>Gantt preventivo — Planejado x Realizado</h2><p>52 semanas com datas reais. P mostra a data prevista; R mostra a data efetivamente executada. Expanda o plano para conferir cada TAG.</p></div><div class="map-summary" id="ganttSummary"></div></div>
+    <div id="ganttChart" class="maintenance-map gantt-chart"></div>
   </article>
 </section>
 

@@ -1,3 +1,16 @@
+# Sistema PCM Preventiva V5
+
+Versão com **Gantt Planejado x Realizado de 52 semanas**, agrupamento por plano mestre e expansão por TAG.
+
+- P = planejado pela periodicidade / data de SS
+- R = realizado pela data de baixa
+- Vermelho = planejado vencido sem baixa
+- Azul = SS programada
+- Verde = realizado
+- Roxo = planejado
+
+O Gantt usa semanas reais e mostra a faixa de datas de cada semana.
+
 # PCM Industrial — V4
 
 Versão focada em planos mestres, TAGs e cronograma real de 52 semanas.
